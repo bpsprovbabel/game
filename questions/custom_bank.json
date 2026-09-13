@@ -1,0 +1,32 @@
+{
+  "Pengetahuan Custom": [
+    {
+      "id": "pc_1",
+      "type": "choice",
+      "text": "Apa nama ibu kota negara Indonesia yang baru di Kalimantan Timur?",
+      "options": ["Nusantara", "Balikpapan", "Samarinda", "Banjarmasin"],
+      "answer": "Nusantara"
+    },
+    {
+      "id": "pc_2",
+      "type": "choice",
+      "text": "Berapa jumlah sila yang terdapat dalam Pancasila dasar negara Indonesia?",
+      "options": ["5 Sila", "4 Sila", "6 Sila", "3 Sila"],
+      "answer": "5 Sila"
+    },
+    {
+      "id": "pc_3",
+      "type": "choice",
+      "text": "Lagu kebangsaan Republik Indonesia adalah...",
+      "options": ["Indonesia Raya", "Bagimu Negeri", "Garuda Pancasila", "Hari Merdeka"],
+      "answer": "Indonesia Raya"
+    },
+    {
+      "id": "pc_4",
+      "type": "choice",
+      "text": "Warna bendera Sang Merah Putih memiliki arti...",
+      "options": ["Merah berani, Putih suci", "Merah darah, Putih tulang", "Merah api, Putih air", "Merah semangat, Putih damai"],
+      "answer": "Merah berani, Putih suci"
+    }
+  ]
+}

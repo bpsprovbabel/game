@@ -1,0 +1,31 @@
+{
+  "name": "game-tarik-tambang-online",
+  "version": "1.0.0",
+  "description": "Game Tarik Tambang Matematika Online Multiplayer berbasis Node.js dan Socket.io",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "game",
+    "math",
+    "tug-of-war",
+    "tarik-tambang",
+    "socketio",
+    "multiplayer"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,128 @@
+========================================================================
+    PANDUAN LENGKAP MENJALANKAN & HOSTING GAME TARIK TAMBANG OTAK
+========================================================================
+
+Dokumen ini berisi panduan praktis untuk:
+1. Menjalankan game secara LOKAL (Offline / Wi-Fi di satu ruangan)
+2. Menghubungkan Laptop Host dengan Smartphone Pemain
+3. Melakukan HOSTING ONLINE (Bisa dimainkan via Internet jarak jauh)
+
+========================================================================
+BAGIAN 1: CARA MENJALANKAN SECARA LOKAL (OFFLINE / WI-FI)
+========================================================================
+
+Cocok untuk: Acara lomba kantor, kelas, aula pertemuan, atau kuis offline.
+
+Syarat:
+- Komputer / Laptop sudah terpasang Node.js (unduh di https://nodejs.org).
+
+Langkah-langkah:
+1. Buka folder game ini di komputer Anda.
+2. Buka Command Prompt (CMD) atau PowerShell di folder ini:
+   - Tips: Ketik "cmd" di kotak address bar folder Windows lalu tekan Enter.
+3. Jika baru pertama kali, ketik perintah berikut lalu tekan Enter:
+   npm install
+4. Jalankan server game:
+   npm start
+   (atau: node server.js)
+5. Di layar CMD akan muncul:
+   ========================================================
+   🎉 GAME TARIK TAMBANG OTAK (BATTLE OF BRAINS) ONLINE SIAP!
+   💻 Monitor / Laptop (Host) : http://localhost:3000
+   📱 Smartphone (Pemain)     : http://192.168.100.41:3000
+   ========================================================
+
+6. CARA MEMBUKA DI LAPTOP / PROYEKTOR (HOST):
+   - Buka browser (Chrome / Edge), ketik: http://localhost:3000
+   - Pilih "LAYAR MONITOR".
+
+7. CARA TERHUBUNG DENGAN HP PEMAIN:
+   - Pastikan Laptop Host dan HP Pemain terhubung ke Wi-Fi yang sama
+     (atau gunakan Hotspot Tethering dari HP/Laptop).
+   - Pemain cukup membuka kamera HP lalu SCAN QR CODE di layar monitor,
+     ATAU ketik alamat IP yang tertera (misal: http://192.168.100.41:3000).
+   - Pilih menu "PEMAIN / HP", masukkan PIN Room, nama, dan pilih tim!
+
+8. CARA MENGHENTIKAN (STOP) SERVER:
+   - Di CMD/PowerShell: Tekan kombinasi keyboard Ctrl + C
+     (lalu ketik Y jika ditanya Terminate batch job).
+
+9. JIKA MUNCUL ERROR "listen EADDRINUSE ... :3000":
+   - Artinya port 3000 masih terpakai oleh server lama di background.
+   - Cara mematikan paksa: Buka CMD / PowerShell lalu jalankan:
+     taskkill /F /IM node.exe
+   - Setelah itu ketik "npm start" kembali!
+
+========================================================================
+BAGIAN 2: CARA HOSTING ONLINE (BISA DIMAINKAN DARI SELURUH DUNIA)
+========================================================================
+
+Cocok untuk: Turnamen jarak jauh, kuis via Zoom/Google Meet, atau 
+peserta yang berada di tempat berbeda (antar kota/provinsi).
+
+------------------------------------------------------------------------
+METODE A: DEPLOY GRATIS DI CLOUD (RENDER.COM) - SANGAT DIREKOMENDASIKAN
+------------------------------------------------------------------------
+Kelebihan: Gratis, dapat domain https resmi, server 24 jam online.
+
+Langkah-langkah:
+1. Buat akun gratis di https://render.com
+2. Upload folder proyek ini ke akun GitHub Anda.
+3. Di Dashboard Render.com:
+   - Klik tombol "New +" -> pilih "Web Service".
+   - Sambungkan repository GitHub game Anda.
+   - Konfigurasi:
+     * Name           : tarik-tambang-otak (atau nama bebas)
+     * Environment    : Node
+     * Build Command  : npm install
+     * Start Command  : node server.js
+     * Instance Type  : Free
+   - Klik "Create Web Service".
+4. Tunggu 1-2 menit hingga proses build selesai.
+5. Anda akan mendapatkan URL online resmi, contoh:
+   https://tarik-tambang-otak.onrender.com
+6. Buka link tersebut di Laptop Host dan bagikan ke seluruh pemain!
+
+------------------------------------------------------------------------
+METODE B: ONLINE INSTAN DARI LAPTOP SENDIRI (TANPA SEWA SERVER)
+------------------------------------------------------------------------
+Kelebihan: Tidak perlu upload ke GitHub atau cloud, langsung online dari 
+laptop Anda dalam 5 detik.
+
+Langkah 1: Jalankan game di laptop Anda seperti biasa (npm start).
+Langkah 2: Buka CMD / Terminal baru, jalankan:
+   npx localtunnel --port 3000
+Langkah 3: Anda langsung diberikan link publik, contoh:
+   https://blue-elephants-jump.loca.lt
+Langkah 4: Bagikan link tersebut ke pemain Anda!
+
+(Alternatif: Anda juga bisa menggunakan tool 'ngrok' dengan mengetik:
+ ngrok http 3000)
+
+------------------------------------------------------------------------
+METODE C: DEPLOY DI VPS LINUX / SERVER INSTANSI (PM2 & NGINX)
+------------------------------------------------------------------------
+Jika Anda memiliki server VPS sendiri (Ubuntu Server):
+1. Install dependensi:
+   npm install --production
+2. Jalankan background service dengan PM2:
+   npm install -g pm2
+   pm2 start server.js --name "tarik-tambang"
+   pm2 save
+   pm2 startup
+3. Port 3000 dapat diarahkan melalui Nginx Reverse Proxy dengan SSL 
+   Certbot untuk menggunakan domain resmi instansi (misal: game.bpsbabel.id).
+
+========================================================================
+BAGIAN 3: KUSTOMISASI CEPAT
+========================================================================
+1. Mengganti Musik Custom:
+   - Letakkan file "lobby.mp3" dan "match.mp3" di folder: public/audio/
+2. Mengganti Logo Instansi:
+   - Letakkan file "logo.png" atau "logo.svg" di folder: public/images/
+3. Upload Bank Soal Sendiri:
+   - Buka Monitor Host -> klik tombol "📂 Bank Soal" -> Upload file Excel/CSV.
+
+========================================================================
+SELAMAT BERMAIN DAN BERTANDING!
+========================================================================

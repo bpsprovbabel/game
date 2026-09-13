@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tarik Tambang Otak - Battle of Brains Online</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css?v=3.9">
+</head>
+<body>
+
+    <!-- =========================================================
+         MODAL COUNTDOWN BERSAMA (5.. 4.. 3.. 2.. 1.. GO!)
+    ========================================================= -->
+    <div id="countdown-modal" class="countdown-modal hidden">
+        <div class="countdown-box">
+            <div id="countdown-num" class="count-num">5</div>
+            <div class="count-text">BERSIAP!</div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL QR CODE (SCAN SMARTPHONE)
+    ========================================================= -->
+    <div id="qr-modal" class="hidden" onclick="toggleQRModal(false)">
+        <div class="qr-modal-content" onclick="event.stopPropagation()">
+            <h3>📱 Scan QR Code untuk Masuk</h3>
+            <img id="qr-image" src="" alt="QR Code Game">
+            <p id="qr-link-text">Buka link di browser HP kamu</p>
+            <button class="btn-primary" onclick="toggleQRModal(false)">TUTUP</button>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL PENGATURAN SOAL & SUBJEK (HOST)
+    ========================================================= -->
+    <div id="settings-modal" class="hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>⚙️ Pengaturan Pertandingan & Soal</h2>
+                <button class="btn-close-modal" onclick="toggleSettingsModal(false)">✕</button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="form-group">
+                    <label>📚 Pilih Subjek Soal:</label>
+                    <select id="select-subject" class="select-custom" onchange="onSubjectChange()">
+                        <option value="matematika">📐 Matematika (SD / SMP / SMA + Statistika)</option>
+                        <option value="bps">📊 BPS (Badan Pusat Statistik - Sensus & Data)</option>
+                        <option value="umum">🎉 Pengetahuan Umum (Tebak Tokoh, Gambar, Lucu & Populer)</option>
+                    </select>
+                </div>
+
+                <!-- Bagian Jenjang & Kelas Matematika -->
+                <div id="math-options-panel" class="form-group-row">
+                    <div class="form-group">
+                        <label>🎓 Jenjang Pendidikan:</label>
+                        <select id="select-level" class="select-custom" onchange="onLevelChange()">
+                            <option value="sd">Sekolah Dasar (SD)</option>
+                            <option value="smp" selected>Sekolah Menengah Pertama (SMP)</option>
+                            <option value="sma">Sekolah Menengah Atas (SMA)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🏫 Tingkat Kelas:</label>
+                        <select id="select-grade" class="select-custom">
+                            <!-- Diisi dinamis lewat JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <div id="stat-info-badge" class="info-badge">
+                    💡 <strong>Statistika & Grafik:</strong> Level ini dilengkapi soal rata-rata (mean), nilai tengah (median), modus, serta grafik diagram batang visual!
+                </div>
+
+                <div class="form-group">
+                    <label>⏱️ Durasi Pertandingan:</label>
+                    <select id="select-duration" class="select-custom">
+                        <option value="60">1 Menit (Cepat & Intens)</option>
+                        <option value="120">2 Menit</option>
+                        <option value="180" selected>3 Menit (Standar)</option>
+                        <option value="300">5 Menit (Maraton)</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="toggleSettingsModal(false)">Batal</button>
+                <button class="btn-primary btn-modal-action" onclick="saveSettings()">SIMPAN & TERAPKAN ✅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL IMPORT SOAL (EXCEL / CSV / GOOGLE SHEETS)
+    ========================================================= -->
+    <div id="bank-modal" class="hidden">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h2>📂 Kelola Bank Soal & Import</h2>
+                <button class="btn-close-modal" onclick="toggleBankModal(false)">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">
+                    Anda dapat menambahkan subjek soal baru dengan mengunggah file <strong>Excel (.xlsx)</strong>, file <strong>CSV</strong>, atau memasukkan link <strong>Google Sheets</strong>. Subjek yang ditambahkan akan otomatis muncul di pilihan Host!
+                </p>
+
+                <div class="import-section-card">
+                    <h3>Metode 1: Unggah File Excel / CSV</h3>
+                    <input type="file" id="file-import-input" accept=".xlsx, .xls, .csv" class="file-input-custom">
+                    
+                    <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-primary btn-small" onclick="processFileUpload()">
+                            📤 Proses & Simpan File
+                        </button>
+                        <a href="/template_soal_tarik_tambang.csv" download="template_soal_tarik_tambang.csv" class="btn-secondary btn-small" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                            📥 Unduh Template CSV / Excel
+                        </a>
+                    </div>
+                </div>
+
+                <div class="import-section-card" style="margin-top: 15px;">
+                    <h3>Metode 2: Impor dari Google Sheets</h3>
+                    <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 8px;">
+                        Pastikan spreadsheet Anda sudah di-share publik (<em>Anyone with the link can view</em>), lalu salin URL Google Sheets di bawah ini:
+                    </p>
+                    <input type="text" id="input-gsheet-url" class="input-custom" style="text-align: left; font-size: 0.95rem; font-family: inherit;" placeholder="Contoh: https://docs.google.com/spreadsheets/d/.../edit">
+                    <button class="btn-primary btn-small" style="margin-top: 8px;" onclick="processGSheetSync()">
+                        🔄 Tarik & Sinkronkan Data
+                    </button>
+                </div>
+
+                <div class="import-section-card" style="margin-top: 15px;">
+                    <h3>Daftar Subjek Pengetahuan Custom Tersedia:</h3>
+                    <div id="custom-subjects-list" class="custom-subjects-tags">
+                        <span class="tag-item">Pengetahuan Custom</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="toggleBankModal(false)">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL KELOLA PEMAIN & KICK (HOST MONITOR)
+    ========================================================= -->
+    <div id="player-manage-modal" class="hidden">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h2>👥 Kelola Pemain & Tim (Kick)</h2>
+                <button class="btn-close-modal" onclick="togglePlayerManageModal(false)">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">
+                    Host dapat mengeluarkan (kick) pemain yang tidak diinginkan secara langsung dari Tim 1 atau Tim 2.
+                </p>
+                <div class="manage-roster-grid">
+                    <!-- Tim 1 Panel -->
+                    <div class="manage-team-box team-1-box">
+                        <div class="manage-team-title team-1-text">
+                            🛡️ <span id="manage-t1-name">TIM MERAH</span> (<span id="manage-t1-count">0</span> Pemain)
+                        </div>
+                        <div id="manage-t1-list" class="manage-player-list">
+                            <div class="manage-no-player">(Belum ada pemain bergabung)</div>
+                        </div>
+                    </div>
+
+                    <!-- Tim 2 Panel -->
+                    <div class="manage-team-box team-2-box">
+                        <div class="manage-team-title team-2-text">
+                            ⚔️ <span id="manage-t2-name">TIM BIRU</span> (<span id="manage-t2-count">0</span> Pemain)
+                        </div>
+                        <div id="manage-t2-list" class="manage-player-list">
+                            <div class="manage-no-player">(Belum ada pemain bergabung)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="togglePlayerManageModal(false)">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SCREEN 1: MENU UTAMA / PILIH PERAN
+    ========================================================= -->
+    <div id="role-select-screen" class="screen-container">
+        <!-- Floating Animated Background Icons -->
+        <div class="floating-icons-bg">
+            <span class="float-icon fi-1">🧠</span>
+            <span class="float-icon fi-2">📚</span>
+            <span class="float-icon fi-3">🧮</span>
+            <span class="float-icon fi-4">📊</span>
+            <span class="float-icon fi-5">💡</span>
+            <span class="float-icon fi-6">⭐</span>
+            <span class="float-icon fi-7">✏️</span>
+            <span class="float-icon fi-8">🎯</span>
+            <span class="float-icon fi-9">🏆</span>
+        </div>
+
+        <!-- Top Bar Navigasi Musik di Layar Awal (Mencegah tumpang tindih dengan judul di HP) -->
+        <div class="home-top-bar">
+            <button id="btn-home-music" class="btn-music-pill" onclick="toggleBGMUI()" title="Musik Santai Lobby">
+                <span class="music-icon">🎵</span>
+                <span id="home-music-text">Musik: ON</span>
+                <div id="home-eq" class="eq-bars active">
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                </div>
+            </button>
+        </div>
+
+        <div class="brand-header">
+            <div class="brand-logo-container">
+                <img id="main-brand-logo" src="/images/logo.svg" alt="Logo BPS Provinsi Kepulauan Bangka Belitung" class="app-institution-logo" onerror="this.onerror=null; this.src='/images/logo.png';">
+            </div>
+            <h1 class="game-title">TARIK TAMBANG<br>OTAK</h1>
+            <p class="subtitle">⚔️ Battle of Brains Online - Adu Cepat & Pengetahuan ⚔️</p>
+        </div>
+
+        <!-- Maskot Animasi: Dua Otak Saling Berhadapan & Menarik Tali Tambang -->
+        <div class="hero-mascot-scene">
+            <!-- Otak Tim Merah (Kiri) - Menghadap Kanan Menarik Tali ke Kiri -->
+            <div class="mascot-brain-card brain-red-team">
+                <div class="brain-avatar-wrap facing-right">
+                    <div class="brain-headband red-bandana"></div>
+                    <span class="brain-face">🧠</span>
+                    <div class="brain-sweat sweat-left">💦</div>
+                    <div class="brain-hands hands-pull-left">✊✊</div>
+                </div>
+                <div class="mascot-badge red-team-tag">TIM MERAH</div>
+            </div>
+
+            <!-- Tali Tambang di Tengah yang Ditarik Menegang -->
+            <div class="mascot-rope-center">
+                <div class="mascot-rope-line"></div>
+                <div class="rope-center-knot">
+                    <div class="knot-ribbon">🚩</div>
+                    <div class="sparkle sp-1">⚡</div>
+                    <div class="sparkle sp-2">✨</div>
+                </div>
+            </div>
+
+            <!-- Otak Tim Biru (Kanan) - Menghadap Kiri Menarik Tali ke Kanan -->
+            <div class="mascot-brain-card brain-blue-team">
+                <div class="brain-avatar-wrap facing-left">
+                    <div class="brain-headband blue-bandana"></div>
+                    <span class="brain-face">🧠</span>
+                    <div class="brain-sweat sweat-right">💦</div>
+                    <div class="brain-hands hands-pull-right">✊✊</div>
+                </div>
+                <div class="mascot-badge blue-team-tag">TIM BIRU</div>
+            </div>
+        </div>
+
+        <div class="role-cards">
+            <!-- Pilihan 1: Layar Monitor (Host / Proyektor) -->
+            <div class="role-card monitor-card" onclick="selectRole('monitor')">
+                <span class="icon">📺</span>
+                <h3>LAYAR MONITOR</h3>
+                <p>Jadikan perangkat ini sebagai Host & Layar Utama (Proyektor / Laptop)</p>
+            </div>
+
+            <!-- Pilihan 2: Pemain (Smartphone / HP) -->
+            <div class="role-card player-card" onclick="selectRole('player')">
+                <span class="icon">🎮</span>
+                <h3>PEMAIN / HP</h3>
+                <p>Masuk sebagai peserta pertandingan menggunakan Smartphone</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SCREEN 2: FORM JOIN PEMAIN (DI HP)
+    ========================================================= -->
+    <div id="player-join-screen" class="screen-container hidden">
+        <div class="card-box">
+            <button class="back-link" onclick="backToRoleSelect()">⬅ Menu Utama</button>
+            <h1 class="game-title" style="font-size: 2rem; margin-bottom: 15px;">GABUNG GAME</h1>
+
+            <!-- Step 1: Input PIN -->
+            <div id="join-step-pin">
+                <h3>Masukkan Kode Game</h3>
+                <input type="tel" id="input-pin" class="input-custom" placeholder="Contoh: 123456" maxlength="6" autocomplete="off">
+                <button class="btn-primary" onclick="submitCheckPIN()">Lanjut ➔</button>
+            </div>
+
+            <!-- Step 2: Input Nama & Pilih Tim -->
+            <div id="join-step-team" class="hidden">
+                <p style="margin: 0 0 5px; font-weight: bold; color: #57606f;">
+                    Kode: <span id="display-pin-verified" style="color: #e67e22;">-</span>
+                </p>
+                <p id="display-room-subject" style="margin: 0 0 12px; font-size: 0.85rem; font-weight: 800; color: #2980b9;">
+                    📚 Subjek: -
+                </p>
+                
+                <h3>Nama Kamu</h3>
+                <input type="text" id="input-player-name" class="input-custom" placeholder="Ketik nama kamu..." maxlength="20" autocomplete="off">
+
+                <h3 style="margin-top: 15px; margin-bottom: 10px;">Pilih Tim</h3>
+                <button id="btn-select-team-1" class="btn-team-select team-red-bg" onclick="submitJoinGame(1)">
+                    <span id="team-1-btn-label">🛡️ TIM MERAH</span>
+                    <span id="team-1-count-badge" class="badge-count">0/20</span>
+                </button>
+
+                <button id="btn-select-team-2" class="btn-team-select team-blue-bg" onclick="submitJoinGame(2)">
+                    <span id="team-2-btn-label">⚔️ TIM BIRU</span>
+                    <span id="team-2-count-badge" class="badge-count">0/20</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SCREEN 3: MONITOR VIEW (LAYAR UTAMA / HOST)
+    ========================================================= -->
+    <div id="monitor-view" class="hidden">
+        <!-- Floating Cartoon Clouds in the sky -->
+        <div class="sky-clouds-container">
+            <div class="cloud cloud-1">☁️</div>
+            <div class="cloud cloud-2">☁️</div>
+            <div class="cloud cloud-3">☁️</div>
+        </div>
+        
+        <!-- Header Top -->
+        <div class="monitor-header-top">
+            <div class="monitor-brand-area">
+                <button class="btn-home-nav" onclick="confirmHostExit()" title="Kembali ke Menu Awal">
+                    🏠 Menu Utama
+                </button>
+                <button id="btn-monitor-music" class="btn-music-pill btn-monitor-music-btn" onclick="toggleBGMUI()" title="Nyalakan / Matikan Musik Santai">
+                    <span class="music-icon">🎵</span>
+                    <span id="monitor-music-text">Musik</span>
+                    <div id="monitor-eq" class="eq-bars active">
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                        <span class="eq-bar"></span>
+                    </div>
+                </button>
+                <div class="monitor-brand">
+                    <img src="/images/logo.svg" alt="Logo BPS" class="monitor-institution-logo" onerror="this.onerror=null; this.src='/images/logo.png';">
+                    <div class="monitor-brand-texts">
+                        <h1>TARIK TAMBANG OTAK</h1>
+                        <div class="tagline">Battle of Brains Online</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Host Config & Status Pill -->
+            <div class="monitor-center-settings">
+                <div id="monitor-subject-badge" class="subject-badge" onclick="toggleSettingsModal(true)">
+                    📚 Matematika - SMP Kelas 8
+                </div>
+                <div class="host-config-buttons">
+                    <button class="btn-config-pill" onclick="toggleSettingsModal(true)" title="Ganti Subjek / Level Soal">
+                        ⚙️ Ganti Soal
+                    </button>
+                    <button class="btn-config-pill btn-bank-pill" onclick="toggleBankModal(true)" title="Import Soal Excel / Google Sheets">
+                        📂 Bank Soal
+                    </button>
+                    <button class="btn-config-pill btn-manage-pill" onclick="togglePlayerManageModal(true)" title="Lihat dan Kelola Seluruh Pemain (Kick)">
+                        👥 Kelola Pemain
+                    </button>
+                </div>
+            </div>
+
+            <!-- Box Kode PIN & Tombol QR -->
+            <div class="room-pin-display">
+                <div>
+                    <div class="pin-text">KODE GAME (PIN)</div>
+                    <div id="monitor-pin-val" class="pin-number">------</div>
+                </div>
+                <button class="btn-qr-toggle" onclick="toggleQRModal(true)">📱 SCAN QR</button>
+            </div>
+        </div>
+
+        <!-- HUD Center: Scoreboard, Timer, & Host Controls -->
+        <div class="monitor-hud-center">
+            
+            <!-- Papan Skor -->
+            <div class="scoreboard-container">
+                <div class="team-score-card t1-score-card">
+                    <div class="team-score-meta">
+                        <span id="monitor-t1-name" class="team-name-tag team-1-text">TIM MERAH</span>
+                        <span id="monitor-t1-count" class="team-count-badge team-1-badge" onclick="togglePlayerManageModal(true, 1)" title="Klik untuk kelola & kick pemain Tim 1" style="cursor: pointer;">👥 0 Pemain ⚙️</span>
+                    </div>
+                    <span id="monitor-t1-score" class="score-badge team-1">0</span>
+                </div>
+                <div class="vs-pill">VS</div>
+                <div class="team-score-card t2-score-card">
+                    <span id="monitor-t2-score" class="score-badge team-2">0</span>
+                    <div class="team-score-meta">
+                        <span id="monitor-t2-name" class="team-name-tag team-2-text">TIM BIRU</span>
+                        <span id="monitor-t2-count" class="team-count-badge team-2-badge" onclick="togglePlayerManageModal(true, 2)" title="Klik untuk kelola & kick pemain Tim 2" style="cursor: pointer;">👥 0 Pemain ⚙️</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timer Permainan -->
+            <div id="monitor-timer" class="game-timer hidden">03:00</div>
+
+            <!-- Host Action Controls -->
+            <div class="host-action-bar">
+                <button id="btn-host-start" onclick="hostStartMatch()" disabled>
+                    MENUNGGU PEMAIN...
+                </button>
+                <button id="btn-host-quit" class="btn-secondary btn-quit hidden" onclick="confirmHostExit()">
+                    🚪 KELUAR
+                </button>
+            </div>
+
+            <!-- Panel Edit Nama Tim (Hanya di Lobby oleh Host) -->
+            <div id="host-team-name-panel" class="team-name-config-panel">
+                <span>Edit Nama Tim:</span>
+                <input type="text" id="input-edit-t1" class="team-name-input t1-input" value="TIM MERAH" maxlength="20" placeholder="Tim 1">
+                <span>VS</span>
+                <input type="text" id="input-edit-t2" class="team-name-input t2-input" value="TIM BIRU" maxlength="20" placeholder="Tim 2">
+                <button class="btn-save-team-names" onclick="saveTeamNames()">Simpan</button>
+            </div>
+        </div>
+
+        <!-- Soal Monitor Stage (Terpisah Kiri & Kanan Tanpa Saling Tumpang Tindih) -->
+        <div class="monitor-questions-layer">
+            <!-- Sisi Kiri: Soal Tim 1 (Merah) -->
+            <div id="t1-q-container" class="q-side-card t1-side hidden">
+                <div class="q-card-header team-red-header">
+                    <span class="team-dot red-dot"></span>
+                    <span id="t1-q-header-title">SOAL TIM MERAH</span>
+                </div>
+                <div id="t1-q-text" class="q-card-body">...</div>
+                <div id="t1-q-chart" class="q-card-chart-box hidden"></div>
+                <div id="t1-q-options" class="q-card-options-box hidden"></div>
+                <div id="t1-feedback-bubble" class="feedback-bubble-popup hidden">✅</div>
+            </div>
+
+            <!-- Sisi Kanan: Soal Tim 2 (Biru) -->
+            <div id="t2-q-container" class="q-side-card t2-side hidden">
+                <div class="q-card-header team-blue-header">
+                    <span class="team-dot blue-dot"></span>
+                    <span id="t2-q-header-title">SOAL TIM BIRU</span>
+                </div>
+                <div id="t2-q-text" class="q-card-body">...</div>
+                <div id="t2-q-chart" class="q-card-chart-box hidden"></div>
+                <div id="t2-q-options" class="q-card-options-box hidden"></div>
+                <div id="t2-feedback-bubble" class="feedback-bubble-popup hidden">❌</div>
+            </div>
+        </div>
+
+        <!-- 3D Tug of War World Arena -->
+        <div class="world-container">
+            <div class="platform-3d">
+                <div class="line-center"></div>
+                <div class="mud-pit"></div>
+
+                <!-- Sistem Tali & Knot -->
+                <div class="rope-system">
+                    <div class="rope-line"></div>
+                    <div id="rope-knot" class="rope-knot">
+                        <div class="knot-flag">🚩</div>
+                    </div>
+                </div>
+
+                <!-- Tim 1 (Kiri / Merah) -->
+                <div id="team-1-roster" class="team-roster team-1-roster">
+                    <!-- Dynamic Characters rendered here -->
+                </div>
+
+                <!-- Tim 2 (Kanan / Biru) -->
+                <div id="team-2-roster" class="team-roster team-2-roster">
+                    <!-- Dynamic Characters rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SCREEN 4: PLAYER VIEW (SMARTPHONE / HP)
+    ========================================================= -->
+    <div id="player-view" class="hidden">
+        
+        <!-- Feedback Overlay Personal di Layar HP -->
+        <div id="player-feedback-overlay" class="feedback-overlay-mobile hidden">
+            <div class="fb-content-box">
+                <div id="fb-icon" class="fb-icon">🎉</div>
+                <h2 id="fb-title" class="fb-title">BENAR!</h2>
+                <div id="fb-desc" class="fb-desc">Tarik terus kawan!</div>
+            </div>
+        </div>
+
+        <!-- Top HUD Player -->
+        <div id="player-top-hud" class="player-top-hud team-red-bg">
+            <div class="player-identity">
+                <div id="player-my-name" class="player-greeting">Halo, Pemain!</div>
+                <div id="player-my-team" class="player-team-label">TIM MERAH</div>
+            </div>
+            <div class="player-hud-right">
+                <div id="player-timer" class="player-timer-badge">03:00</div>
+                <button class="btn-player-leave" onclick="confirmPlayerLeave()" title="Keluar dari Game">
+                    🚪 Keluar
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area Player (Scrollable & Responsive di Android/iOS) -->
+        <div class="player-main-content">
+            
+            <!-- STATE A: GILIRAN KAMU (ACTIVE TURN) -->
+            <div id="state-my-turn" class="turn-active-card hidden">
+                <div class="turn-notice-banner">🔥 GILIRAN KAMU MENJAWAB! 🔥</div>
+                
+                <div class="question-box-mobile">
+                    <div id="mobile-question-formula" class="question-formula">12 + 15 = ?</div>
+                    <div id="mobile-question-chart" class="mobile-chart-box hidden"></div>
+                </div>
+
+                <!-- Input Tipe 1: NUMPAD ANGKA (Untuk Soal Numerik) -->
+                <div id="input-type-numeric" class="input-panel-container">
+                    <!-- Display Jawaban yang Sedang Diketik -->
+                    <div id="mobile-answer-display" class="answer-display-box">
+                        <span class="answer-placeholder">Ketik jawabanmu...</span>
+                    </div>
+
+                    <!-- Touch Numpad Keyboard -->
+                    <div class="touch-numpad">
+                        <button class="num-key" onclick="pressNumKey('1')">1</button>
+                        <button class="num-key" onclick="pressNumKey('2')">2</button>
+                        <button class="num-key" onclick="pressNumKey('3')">3</button>
+                        <button class="num-key" onclick="pressNumKey('4')">4</button>
+                        <button class="num-key" onclick="pressNumKey('5')">5</button>
+                        <button class="num-key" onclick="pressNumKey('6')">6</button>
+                        <button class="num-key" onclick="pressNumKey('7')">7</button>
+                        <button class="num-key" onclick="pressNumKey('8')">8</button>
+                        <button class="num-key" onclick="pressNumKey('9')">9</button>
+                        <button class="num-key key-action" onclick="pressNumKey('-')">+/-</button>
+                        <button class="num-key" onclick="pressNumKey('0')">0</button>
+                        <button class="num-key key-action" onclick="pressNumKey('DEL')">⌫ Hapus</button>
+                        <button class="num-key key-submit" onclick="submitPlayerAnswer()">KIRIM JAWABAN 🚀</button>
+                    </div>
+                </div>
+
+                <!-- Input Tipe 2: PILIHAN GANDA (A, B, C, D) -->
+                <div id="input-type-choice" class="input-panel-container hidden">
+                    <div class="choice-instructions">Pilih salah satu jawaban:</div>
+                    <div id="choice-buttons-container" class="choice-grid">
+                        <!-- Dynamic A, B, C, D buttons -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- STATE B: MENUNGGU GILIRAN REKAN (WAITING TURN) -->
+            <div id="state-waiting-turn" class="turn-waiting-card hidden">
+                <div class="turn-waiting-icon">⏳</div>
+                <h3 class="waiting-title">Giliran Rekan Satu Timmu:</h3>
+                <div id="active-teammate-display" class="active-teammate-name">Budi</div>
+                <p style="color: #747d8c; margin: 0 0 15px; font-weight: 600;">Bersiaplah, giliranmu akan segera tiba!</p>
+
+                <!-- Antrean Tim -->
+                <div class="queue-box">
+                    <h4>Urutan Giliran Tim:</h4>
+                    <ul id="team-queue-list" class="queue-list">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- STATE C: LOBBY TUNGGU PERTANDINGAN DIMULAI -->
+            <div id="state-lobby-waiting" class="turn-waiting-card">
+                <div class="turn-waiting-icon">🎮</div>
+                <h2 style="margin: 0 0 8px; color: #2f3542;">Kamu Sudah Siap!</h2>
+                <div id="lobby-subject-info" style="font-size: 0.9rem; font-weight: 800; color: #3498db; margin-bottom: 10px;">
+                    📚 Subjek: Menunggu Host...
+                </div>
+                <p style="color: #57606f; font-weight: bold; margin-bottom: 15px;">Menunggu Host menekan tombol MULAI PERTANDINGAN...</p>
+                <div class="queue-box">
+                    <h4>Anggota Tim Kamu:</h4>
+                    <ul id="lobby-teammate-list" class="queue-list">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+                <button id="btn-player-leave-waiting-lobby" class="btn-secondary" style="margin-top: 15px; width: 100%; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; border: 2px solid #cbd5e1; cursor: pointer;" onclick="returnToMainMenu()">
+                    🏠 Kembali ke Lobi Utama
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SCREEN 5: MODAL PEMENANG (WINNER MODAL)
+    ========================================================= -->
+    <div id="winner-modal" class="hidden">
+        <div class="winner-card">
+            <div class="trophy-anim">🏆</div>
+            <h2 id="winner-headline">PEMENANG PERTANDINGAN</h2>
+            <div id="winner-team-name" class="winner-team-display team-1-won">TIM MERAH</div>
+            
+            <!-- Daftar Anggota Tim Pemenang -->
+            <div id="winner-members-panel" class="winner-members-panel">
+                <div id="winner-members-header" class="winner-members-header">👑 Anggota Tim Juara:</div>
+                <div id="winner-members-list" class="winner-members-chips">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Detail Skor (Khusus Layar Monitor Host, disembunyikan di HP) -->
+            <div id="winner-monitor-details" class="winner-monitor-only">
+                <div id="winner-final-score" class="final-score-pill">Skor Akhir: 5 - 2</div>
+                <p id="winner-reason" style="color: #747d8c; font-weight: bold; margin: 6px 0 14px;">Unggul selisih 3 poin!</p>
+            </div>
+
+            <div class="winner-actions">
+                <button id="btn-winner-return-lobby" class="btn-primary btn-large-action btn-return-lobi-utama" onclick="returnToMainMenu()">
+                    🏠 Kembali ke Lobi Utama
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SheetJS CDN untuk Parsing Excel & CSV di Browser -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <!-- Sockets & Client Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/sound.js?v=3.9"></script>
+    <script src="/js/client.js?v=3.9"></script>
+</body>
+</html>

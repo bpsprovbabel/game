@@ -1,0 +1,8 @@
+Subjek,Kategori,Tipe,Pertanyaan,Pilihan_A,Pilihan_B,Pilihan_C,Pilihan_D,Jawaban_Benar
+Pengetahuan BPS,Sensus,angka,"Sensus Pertanian dilaksanakan pada tahun yang berakhiran angka berapa?",,,,,3
+Pengetahuan BPS,Sensus,angka,"Berapa tahun sekali Sensus Penduduk dilaksanakan oleh BPS?",,,,,10
+Pengetahuan BPS,Regulasi,angka,"Undang-Undang Nomor berapa tahun 1997 yang mengatur tentang Statistik?",,,,,16
+Pengetahuan BPS,Konsep,pilihan,"Indikator yang digunakan untuk mengukur laju perubahan harga barang/jasa secara umum adalah...",Inflasi,IPM,PDRB,Gini,Inflasi
+Pengetahuan BPS,Konsep,pilihan,"Ukuran statistik yang digunakan untuk mengetahui tingkat ketimpangan pengeluaran adalah...",Rasio Gini,Tingkat Kemiskinan,Indeks Glikemik,Angka Harapan Hidup,Rasio Gini
+Pengetahuan Umum,Sejarah,angka,"Pada tanggal berapa bulan Agustus Indonesia merayakan Hari Kemerdekaan?",,,,,17
+Pengetahuan Umum,Geografi,pilihan,"Danau vulkanik terbesar di Indonesia dan Asia Tenggara adalah Danau...",Toba,Singkarak,Maninjau,Poso,Toba
